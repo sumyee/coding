@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise A+</title>
+    <script src="./main.js"></script>
+  </head>
+  <body>
+    <script>
+      // console.log(Promise);
+      const p = new Promise((resolve, reject) => {
+        console.log('****** new Promise ******');
+        // console.log(Promise.PENDING);
+        // resolve("Promise：resolve");
+        reject("Promise：reject");
+        // setTimeout(() => {
+        //   resolve("Promise：resolve");
+        //   console.log('setTimeout');
+        // }, 1000);
+      })
+      p.then(val => {
+        console.log('then:', val);
+        // return 'Promise：resolve then'
+        return new Promise((r) => r('new Promise resolve'))
+      }, err => {
+        console.log('err:', err);
+        // return 'Promise：reject err'
+        return new Promise((r) => r('new Promise reject'))
+      })
+      console.log(p);
+      p.then((res) => {
+        console.log('Promise：resolve then then ***', res);
+      }, err => {
+        console.log(err);
+      }).catch(err => {
+        console.log(err);
+      });
+      console.log('同步');
+    </script>
+  </body>
+</html>
