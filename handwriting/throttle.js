@@ -5,21 +5,23 @@
  * @param {*} wait
  * @param {*} immediate
  */
-function throttle(func, wait, immediate) {
-  let previous = 0;
 
-  return function () {
-    const context = this;
-    const args = arguments;
+// 时间戳版
+// function throttle(func, wait, immediate) {
+//   let previous = 0;
 
-    const now = Date.now();
+//   return function () {
+//     const context = this;
+//     const args = arguments;
 
-    if (now - previous > wait) {
-      previous = now;
-      func.apply(context, args);
-    }
-  };
-}
+//     const now = Date.now();
+
+//     if (now - previous > wait) {
+//       previous = now;
+//       func.apply(context, args);
+//     }
+//   };
+// }
 
 // 定时器
 // function throttle(func, wait) {
@@ -38,9 +40,34 @@ function throttle(func, wait, immediate) {
 //   };
 // }
 
-const fn = (a) => {
-  console.log(a);
+// 结合版
+function throttle(fn, wait) {
+  let timer = null;
+  let startTime = 0;
+
+  return function () {
+    const context = this;
+    const args = arguments;
+    const now = Date.now();
+
+    // 执行剩余时间
+    const remaining = wait - (now - startTime);
+
+    clearTimeout(timer);
+
+    if (remaining <= 0) {
+      fn.apply(context, args);
+      startTime = Date.now();
+    } else {
+      timer = setTimeout(fn, remaining);
+    }
+  };
 }
 
-const th = throttle(fn, 10000)
-th(2333333)
+const fn = () => {
+  console.log(Date.now());
+};
+
+const th = throttle(fn, 1000);
+
+setInterval(th, 10);
