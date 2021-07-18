@@ -1,14 +1,14 @@
-import _ from "lodash";
+// import _ from "lodash";
 import printMe from "./print.js";
 import { cube } from './math.js';
 
-import "./styles/index.css";
+import "./styles/index.less";
 import bgImg from "./images/bg.png";
 
 function component() {
   let element = document.createElement("div");
 
-  element.innerHTML = _.join(["Hello", "webpack"], " ");
+  // element.innerHTML = _.join(["Hello", "webpack"], " ");
   element.classList.add("hello");
 
   const bg = new Image();
@@ -39,7 +39,32 @@ const arr = [
   new Promise(() => {})
 ]
 arr.map((i) => {
-  console.log(i);
+  console.log('------ map -------', i);
 })
 
+const jiantou = () => {}
+
 console.log(cube(1,2));
+
+// class
+class A {
+  constructor() {
+    console.log('class A');
+  }
+  // a = 123
+}
+
+// request
+function request() {
+  const xhr = new XMLHttpRequest();
+
+  xhr.open('GET', '/api/user')
+
+  xhr.onload = function() {
+    console.log(xhr);
+  }
+
+  xhr.send();
+}
+
+request();
