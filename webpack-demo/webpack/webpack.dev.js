@@ -5,6 +5,8 @@ const common = require("./webpack.common.js");
 module.exports = merge(common, {
   mode: "development",
   devServer: {
+    // hotOnly: true,
+    contentBase: '../dist',
     // 前端模拟数据
     before(app) {
       app.get('/api/user', (req, res) => {
