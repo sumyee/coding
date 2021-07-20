@@ -5,16 +5,23 @@ const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin');
+const Happypack = require('happypack');
 
 module.exports = {
-  // devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
   entry: {
     app: './src/main.js',
     index: './src/index.js',
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
+    // filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist'),
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+    },
   },
   module: {
     // noParse: /jquery|lodash/,
@@ -25,8 +32,10 @@ module.exports = {
       },
       {
         test: /\.m?js$/,
-        exclude: /node_modules/,
-        use: 'babel-loader',
+        // exclude: /node_modules/,
+        // use: 'babel-loader',
+        include: path.resolve(__dirname, '../src'),
+        use: 'happypack/loader?id=js',
       },
       {
         test: /\.(css|less)$/,
@@ -53,10 +62,12 @@ module.exports = {
       minChunks: 1,
       maxAsyncRequests: 5,
       maxInitialRequests: 3,
-      automaticNameDelimiter: '~',
+      automaticNameDelimiter: '-',
       name: true,
       cacheGroups: {
+        // 第三方模块
         vendors: {
+          name: 'vendors',
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
         },
@@ -69,7 +80,9 @@ module.exports = {
     },
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      // cleanOnceBeforeBuildPatterns: ['**/*', '!dll', '!dll/**'] // 不删除dll目录
+    }),
     new HtmlWebpackPlugin({
       title: 'app-page',
       template: path.resolve(__dirname, '../src', 'public', 'index.html'),
@@ -90,6 +103,24 @@ module.exports = {
     new webpack.BannerPlugin('Oops ~~~'),
     //忽略 moment 下的 ./locale 目录
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new Happypack({
+      id: 'js', // 和rule中的id=js对应
+      //将之前 rule 中的 loader 在此配置
+      loaders: ['babel-loader'], //必须是数组
+      // loaders: [
+      //   {
+      //     loader: 'babel-loader',
+      //     options: {
+      //       presets: ['@babel/preset-env', '@babel/preset-react'],
+      //     },
+      //   },
+      // ],
+    }),
+    // dll
+    // new webpack.DllReferencePlugin({
+    //   // 打包前先检查这个文件 如果有就跳过打包直接动态链接，没有再重新打包
+    //   manifest: path.resolve(__dirname, '../dist', 'dll', 'manifest.json')
+    // })
     // new webpack.ProvidePlugin({
     //   $: ["jquery"]
     // })
